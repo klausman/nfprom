@@ -1,4 +1,4 @@
 NFPROM_USER="prometheus"
 NFPROM_LOG_FILE="/var/log/prometheus/nfprom.log"
-NFPROM_ARGS=""
-
+NFPROM_ARGS="-ipv6=true -addr='localhost:9912'"
+PROMETHEUS_USER=prometheus
