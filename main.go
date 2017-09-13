@@ -104,7 +104,7 @@ func (c *iptablesCollector) iptablesCollect(ch chan<- prometheus.Metric, l2proto
 		// We can now be sure the tokens are:
 		// [272282:51019430] -A prometheus -s 88.99.5.140/32 -p tcp -m tcp --sport 22 -j RETURN]
 		// [231097:107682563] -A prometheus -d 88.99.5.140/32 -p tcp -m tcp --dport 22 -j RETURN]
-		bytes, packets, err := extractCounters(tokens[0])
+		packets, bytes, err := extractCounters(tokens[0])
 		if err != nil {
 			fmt.Printf("Malformed packet/byte count on line %d: %v", lineno, err)
 			continue

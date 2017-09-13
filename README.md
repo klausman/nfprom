@@ -77,7 +77,7 @@ $ go build
 ```
 
 To install, copy the binary (`nfprom`) to whatever location is appropriate
-(typically `usr/local/sbin` or `/usr/local/bin`) and configure your system to
+(typically `/usr/local/sbin` or `/usr/local/bin`) and configure your system to
 start `nfprom` as is needed (see the section at the end of this file for some
 information on that).
 
