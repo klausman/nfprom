@@ -1,0 +1,13 @@
+[Unit]
+Description="Prometheus IPTables stats exporter"
+StartLimitInterval=0
+After=basic.target network.target
+
+[Service]
+ExecStart=/usr/sbin/nfprom
+WorkingDirectory=/
+KillMode=process
+Restart=always
+RestartSec=1s
+LimitCORE=infinity
+WantedBy=multi-user.target

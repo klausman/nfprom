@@ -1,0 +1,4 @@
+NFPROM_USER="prometheus"
+NFPROM_LOG_FILE="/var/log/prometheus/nfprom.log"
+NFPROM_ARGS=""
+
