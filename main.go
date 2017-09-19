@@ -93,6 +93,9 @@ func (c *iptablesCollector) Collect(ch chan<- prometheus.Metric) {
 
 func (c *iptablesCollector) iptablesCollect(ch chan<- prometheus.Metric, l2proto string) {
 	data := getIptablesData(l2proto)
+	if data == "" {
+		return
+	}
 	scanner := bufio.NewScanner(strings.NewReader(data))
 	lineno := 0
 	for scanner.Scan() {
@@ -134,15 +137,20 @@ func getIptablesData(l2proto string) string {
 	}
 	cmd := exec.Command(cmdline[0], cmdline[1:]...)
 	stdout, err := cmd.StdoutPipe()
+	defer stdout.Close()
 	if err != nil {
 		log.Fatal(fmt.Printf("cmd.StdoutPipe(): %v", err))
+		return ""
 	}
 	if err := cmd.Start(); err != nil {
 		log.Fatal(fmt.Printf("cmd.Start(): %v", err))
+		return ""
 	}
+	defer cmd.Wait()
 	b, err := ioutil.ReadAll(stdout)
 	if err != nil {
 		log.Fatal(fmt.Printf("ioutil.ReadAll(): %v", err))
+		return ""
 	}
 	return string(b)
 }
