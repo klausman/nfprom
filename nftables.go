@@ -76,9 +76,8 @@ func (c *nftablesCollector) nftablesCollect(ch chan<- prometheus.Metric) {
 	scanner := bufio.NewScanner(strings.NewReader(data))
 	lineno := 0
 	for scanner.Scan() {
-		lineno += 1
+		lineno++
 		line := strings.Trim(scanner.Text(), "\r\n\t ")
-		//log.Printf("Line: %#v", line)
 		if strings.Contains(line, "}") || strings.Contains(line, "{") || line == "return" {
 			continue
 		}
@@ -108,8 +107,7 @@ func (c *nftablesCollector) nftablesCollect(ch chan<- prometheus.Metric) {
 }
 
 func getNftablesData() string {
-	cmdline := []string{"sudo", "nft", "list", "chain", *addrFamily, *nftable, *nftchain}
-	cmd := exec.Command(cmdline[0], cmdline[1:]...)
+	cmd := exec.Command("sudo", "nft", "list", "chain", *addrFamily, *nftable, *nftchain)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Fatal(fmt.Printf("cmd.StdoutPipe(): %v", err))
@@ -117,13 +115,13 @@ func getNftablesData() string {
 	}
 	defer stdout.Close()
 	if err := cmd.Start(); err != nil {
-		log.Fatal(fmt.Printf("cmd.Start(): %v", err))
+		log.Printf("cmd.Start(): %v", err)
 		return ""
 	}
 	defer cmd.Wait()
 	b, err := ioutil.ReadAll(stdout)
 	if err != nil {
-		log.Fatal(fmt.Printf("ioutil.ReadAll(): %v", err))
+		log.Printf("ioutil.ReadAll(): %v", err)
 		return ""
 	}
 	return string(b)
@@ -184,11 +182,8 @@ func extractNftDirectionAddrPort(data []string) (string, string, string) {
 }
 
 func stringIndexSL(s string, sl []string) int {
-	//log.Printf("Finding %#v in %#v", s, sl)
 	for i, c := range sl {
-		//log.Printf("%#v == %#v?", s, c)
 		if s == c {
-			//log.Printf("Match!")
 			return i
 		}
 	}

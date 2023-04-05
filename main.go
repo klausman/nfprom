@@ -52,5 +52,5 @@ func main() {
 		log.Fatalf("Mode '%s' not recognized. Must be 'nft' or 'ipt'", *mode)
 	}
 	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(*listen, nil)
+	panic(http.ListenAndServe(*listen, nil))
 }

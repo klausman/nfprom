@@ -34,18 +34,18 @@ var (
 )
 
 type iptablesCollector struct {
-	do_ipv4      bool
-	do_ipv6      bool
+	doIpv4       bool
+	doIpv6       bool
 	chain        string
 	namespace    string
 	packetsTotal *prometheus.Desc
 	bytesTotal   *prometheus.Desc
 }
 
-func newIptablesCollector(chain, namespace string, do_ipv4, do_ipv6 bool) prometheus.Collector {
+func newIptablesCollector(chain, namespace string, doIpv4, doIpv6 bool) prometheus.Collector {
 	c := iptablesCollector{
-		do_ipv4:   do_ipv4,
-		do_ipv6:   do_ipv6,
+		doIpv4:    doIpv4,
+		doIpv6:    doIpv6,
 		chain:     chain,
 		namespace: namespace,
 		packetsTotal: prometheus.NewDesc(
@@ -71,10 +71,10 @@ func (c *iptablesCollector) Describe(ch chan<- *prometheus.Desc) {
 
 // Collect returns the current state of all metrics of the collector.
 func (c *iptablesCollector) Collect(ch chan<- prometheus.Metric) {
-	if c.do_ipv4 {
+	if c.doIpv4 {
 		c.iptablesCollect(ch, "ipv4")
 	}
-	if c.do_ipv6 {
+	if c.doIpv6 {
 		c.iptablesCollect(ch, "ipv6")
 	}
 }
@@ -87,7 +87,7 @@ func (c *iptablesCollector) iptablesCollect(ch chan<- prometheus.Metric, l2proto
 	scanner := bufio.NewScanner(strings.NewReader(data))
 	lineno := 0
 	for scanner.Scan() {
-		lineno += 1
+		lineno++
 		tokens := strings.Split(scanner.Text(), " ")
 		if len(tokens) < 4 || tokens[2] != "prometheus" || tokens[4] == "RETURN" {
 			continue
@@ -113,17 +113,15 @@ func (c *iptablesCollector) iptablesCollect(ch chan<- prometheus.Metric, l2proto
 			float64(bytes),
 			l2proto, l3proto, address, port, direction)
 	}
-
 }
 
 func getIptablesData(l2proto string) string {
-	var cmdline []string
+	var cmd *exec.Cmd
 	if l2proto == "ipv4" {
-		cmdline = []string{"sudo", "iptables-save", "-c", "-t", "filter"}
+		cmd = exec.Command("sudo", "iptables-save", "-c", "-t", "filter")
 	} else {
-		cmdline = []string{"sudo", "ip6tables-save", "-c", "-t", "filter"}
+		cmd = exec.Command("sudo", "ip6tables-save", "-c", "-t", "filter")
 	}
-	cmd := exec.Command(cmdline[0], cmdline[1:]...)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Fatal(fmt.Printf("cmd.StdoutPipe(): %v", err))
@@ -131,13 +129,13 @@ func getIptablesData(l2proto string) string {
 	}
 	defer stdout.Close()
 	if err := cmd.Start(); err != nil {
-		log.Fatal(fmt.Printf("cmd.Start(): %v", err))
+		log.Printf("cmd.Start(): %v", err)
 		return ""
 	}
 	defer cmd.Wait()
 	b, err := ioutil.ReadAll(stdout)
 	if err != nil {
-		log.Fatal(fmt.Printf("ioutil.ReadAll(): %v", err))
+		log.Printf("ioutil.ReadAll(): %v", err)
 		return ""
 	}
 	return string(b)
