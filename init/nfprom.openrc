@@ -7,5 +7,5 @@ command=/usr/sbin/nfprom
 command_args="${NFPROM_ARGS}"
 command_background="true"
 
-start_stop_daemon_args="-u ${PROMETHEUS_USER} -1 ${NFPROM_LOG_FILE} -2 ${NFPROM_LOG_FILE} -- ${NFPROM_ARGS}"
+start_stop_daemon_args="-1 ${NFPROM_LOG_FILE} -2 ${NFPROM_LOG_FILE} -- ${NFPROM_ARGS}"
 
