@@ -1,13 +1,17 @@
 [Unit]
-Description="Prometheus IPTables stats exporter"
+Description="Prometheus NFTables stats exporter"
 StartLimitInterval=0
 After=basic.target network.target
 
 [Service]
-ExecStart=/usr/sbin/nfprom
+ExecStart=/usr/sbin/nfprom -jsonfile /var/spool/nfprom/stats.json
 WorkingDirectory=/
-KillMode=process
+KillMode=control-group
 Restart=always
 RestartSec=1s
-LimitCORE=infinity
+WantedBy=multi-user.target
+User=root
+Group=root
+
+[Install]
 WantedBy=multi-user.target
