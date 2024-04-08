@@ -16,12 +16,12 @@ type Stat struct {
 }
 
 func (s Stat) String() string {
-	var acc strings.Builder
+	var res strings.Builder
 	for k, v := range s.Fields {
-		acc.WriteString(fmt.Sprintf("%s=%s;", k, v))
+		res.WriteString(fmt.Sprintf("%s=%s;", k, v))
 	}
-	acc.WriteString(fmt.Sprintf("By=%d;Pk=%d", s.Bytes, s.Packets))
-	return acc.String()
+	res.WriteString(fmt.Sprintf("By=%d;Pk=%d", s.Bytes, s.Packets))
+	return res.String()
 }
 
 // NewStat creates a new Stat object with the Fields map initialized
