@@ -87,29 +87,28 @@ func main() {
 		}
 		prometheus.MustRegister(jt, reg)
 		panic(srv.ListenAndServe())
-	} else {
-		log.Printf("[%d] Forking off webserver process", pid)
-		wscmd := forkWebserver()
-		defer killNoCheck(wscmd)
-		log.Printf("[%d] Starting NFT exporter", pid)
-		go func(wscmd *exec.Cmd) {
-			pid := os.Getpid()
-			err := wscmd.Wait()
-			var eerr *exec.ExitError
-			if errors.As(err, &eerr) {
-				log.Printf("[%d] Webserver process with pid %d exited with code %d", pid, eerr.Pid(), eerr.ExitCode())
-				log.Printf("[%d] Webserver stderr: %v", pid, string(eerr.Stderr))
-			} else {
-				log.Printf("[%d] Webserver process failed to launch: %s", pid, err)
-			}
-			log.Printf("[%d] Nftables/Netlink process exiting", pid)
-			// an os.Exit implicitly does NOT run the defer kill... above,
-			// so we avoid a loop-de-loop here
-			os.Exit(-1)
-		}(wscmd)
-		exportNftForever()
-		// if we ever get here, we need to get rid of the child as well
 	}
+	log.Printf("[%d] Forking off webserver process", pid)
+	wscmd := forkWebserver()
+	defer killNoCheck(wscmd)
+	log.Printf("[%d] Starting NFT exporter", pid)
+	go func(wscmd *exec.Cmd) {
+		pid := os.Getpid()
+		err := wscmd.Wait()
+		var eerr *exec.ExitError
+		if errors.As(err, &eerr) {
+			log.Printf("[%d] Webserver process with pid %d exited with code %d", pid, eerr.Pid(), eerr.ExitCode())
+			log.Printf("[%d] Webserver stderr: %v", pid, string(eerr.Stderr))
+		} else {
+			log.Printf("[%d] Webserver process failed to launch: %s", pid, err)
+		}
+		log.Printf("[%d] Nftables/Netlink process exiting", pid)
+		// an os.Exit implicitly does NOT run the defer kill... above,
+		// so we avoid a loop-de-loop here
+		os.Exit(-1)
+	}(wscmd)
+	exportNftForever()
+	// if we ever get here, we need to get rid of the child as well
 }
 
 func dropPrivileges(username, group string) error {
