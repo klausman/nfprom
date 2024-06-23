@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	nfpversion = "0.2.0"
+	nfpversion = "0.3.1"
 )
 
 var (

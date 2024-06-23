@@ -1,4 +1,4 @@
-module github.com/klausman/nfprom
+module pkg.i-no.de/pkg/nfprom
 
 go 1.22
 

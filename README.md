@@ -1,5 +1,9 @@
 # nfprom -- Export data from NFTables accounting chain
 
+**NOTE**: As of 2024-06-23 the Go import url of this repo has changed to:
+`pkg.i-no.de/pkg/nfprom`. Issues, merge requests etc should be filed at its new
+source location, https://codeberg.org/klausman/nfprom
+
 This is a very simple Go server that exports the packet and byte counters from
 an NFTables accounting chain. Its intended use case is to have a separate
 counting-only chain for all the traffic you want stats on, export that data
